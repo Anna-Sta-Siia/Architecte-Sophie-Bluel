@@ -1,4 +1,4 @@
-const gallery = document.querySelector(".gallery"); // On récupère la balise parent
+const gallery = document.querySelector(".gallery"); // On récupère la balise parent pour les works
 let projets = []; // Tableau global pour stocker les projets
 
 // Récupération des travaux/works depuis l'API
@@ -71,6 +71,7 @@ fetch("http://localhost:5678/api/categories")
     });
     // On place le div contenant tous les boutons avant la galerie
     gallery.before(divButons);
+
     function removeActiveClass() {
       const tousLesBoutons = document.querySelectorAll(".boutonsdesfiltres");
       tousLesBoutons.forEach(btn => btn.classList.remove("active"));
@@ -80,4 +81,6 @@ fetch("http://localhost:5678/api/categories")
   .catch(error => {
     console.error("Erreur lors de la récupération des catégories :", error);
   });
+
+  
 
