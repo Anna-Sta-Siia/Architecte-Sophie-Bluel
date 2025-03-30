@@ -1,52 +1,36 @@
-//Création et le placement de la section parent
-const formcontaineur=document.createElement("section")
-formcontaineur.classList.add("formcontaineur")
-const footer=document.querySelector("footer")
-footer.before(formcontaineur)
-//Création et le placement du titre h2
-const login=document.createElement("h2")
-login.innerText="Log in"
-formcontaineur.appendChild(login)
-//Création et le placement du formulaire de connection
-const formulairedeconnexion=document.createElement("form")
-formulairedeconnexion.setAttribute("action","#")
-formulairedeconnexion.setAttribute("method","post")
-formcontaineur.appendChild(formulairedeconnexion)
-//Création et le placement du label et input(email)
-const labelemail=document.createElement("label")
-labelemail.setAttribute("for","email")
-labelemail.innerText="E-mail"
-const inputemail=document.createElement("input")
-inputemail.setAttribute("name","email")
-inputemail.setAttribute("id","email")
-inputemail.setAttribute("value","")
-inputemail.setAttribute("type","text")
-formulairedeconnexion.appendChild(labelemail)
-formulairedeconnexion.appendChild(inputemail)
-//Création et le placement du label et input(mdp)
-const labelmdp=document.createElement("label")
-labelmdp.setAttribute("for","motdepasse")
-labelmdp.innerText="Mot de passe"
-const inputmdp=document.createElement("input")
-inputmdp.setAttribute("name","motdepasse")
-inputmdp.setAttribute("id","motdepasse")
-inputmdp.setAttribute("value","")
-inputmdp.setAttribute("type","text")
-formulairedeconnexion.appendChild(labelmdp)
-formulairedeconnexion.appendChild(inputmdp)
-//Création du buton pour se connecter
-const inputseconnecter=document.createElement("input")
-inputseconnecter.value="Se connecter"
-inputseconnecter.setAttribute("type","submit")
-inputseconnecter.classList.add("seconnecter")
-formulairedeconnexion.appendChild(inputseconnecter)
-const mdpoublie=document.createElement("a")
-mdpoublie.setAttribute("href","#")
-mdpoublie.innerText="Mot de passe oublié"
-formulairedeconnexion.appendChild(mdpoublie)
-mdpoublie.addEventListener("mouseover", () => {
-    mdpoublie.classList.add("surligne")
-  })
-mdpoublie.addEventListener("mouseout", () => {
-    mdpoublie.classList.remove("surligne")
-  })
+
+//Récupération des éléments du formulaire de connexion
+const formulairedeconnexion = document.querySelector("form")
+const inputemail = document.getElementById("email")
+const inputmdp = document.getElementById("motDePasse")
+
+formulairedeconnexion.addEventListener("submit", (event) => {
+    event.preventDefault(); // empêche le rechargement automatique
+
+    const email = inputemail.value;
+    const password = inputmdp.value;
+
+    fetch("http://localhost:5678/api/users/login", {//objet de configuration:
+        method: "POST", // *method post pour saisir l'identifiant et le mdp
+        headers: { "Content-Type": "application/json" },//*format de la charge utile pour que le serveur l'interprète correctement
+        body: JSON.stringify({ email, password })//*charge utile, des données, que le serveur utilise pour "poster"
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+                sessionStorage.setItem("justLoggedIn", "true"); // 🆕 marqueur temporaire
+                window.location.href = "../index.html" // on va vers la page d’accueil
+            } else {
+                alert("Identifiants incorrects !")
+            }
+        })
+        .catch(err => console.error(err))
+})
+
+
+
+
+
+
+

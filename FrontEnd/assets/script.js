@@ -1,6 +1,21 @@
 const gallery = document.querySelector(".gallery"); // On récupère la balise parent pour les works
 let projets = []; // Tableau global pour stocker les projets
 
+//  Vérification la mode d'acces
+const cle = localStorage.getItem("token");
+const justLoggedIn = sessionStorage.getItem("justLoggedIn");
+const elementsModeAdmin=document.querySelectorAll(".mode")
+
+
+if (cle !== null && justLoggedIn === "true"){
+  // Mode admin (vraie connexion)
+  elementsModeAdmin.forEach(element => {
+    element.classList.remove("normal")});
+  
+  // On peut ensuite supprimer le marqueur pour éviter qu'il reste
+  sessionStorage.removeItem("justLoggedIn");
+}
+
 // Récupération des travaux/works depuis l'API
 fetch("http://localhost:5678/api/works")
   .then(response => response.json())
