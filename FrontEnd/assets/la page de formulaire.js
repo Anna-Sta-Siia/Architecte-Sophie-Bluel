@@ -1,14 +1,14 @@
 
 //Récupération des éléments du formulaire de connexion
-const formulairedeconnexion = document.querySelector("form")
-const inputemail = document.getElementById("email")
-const inputmdp = document.getElementById("motDePasse")
+const formulaireDeConnexion = document.querySelector("form")
+const inputEmail = document.getElementById("email")
+const inputMdp = document.getElementById("motDePasse")
 
-formulairedeconnexion.addEventListener("submit", (event) => {
+formulaireDeConnexion.addEventListener("submit", (event) => {
     event.preventDefault(); // empêche le rechargement automatique
 
-    const email = inputemail.value;
-    const password = inputmdp.value;
+    const email = inputEmail.value;
+    const password = inputMdp.value;
 
     fetch("http://localhost:5678/api/users/login", {//objet de configuration:
         method: "POST", // *method post pour saisir l'identifiant et le mdp
@@ -19,7 +19,7 @@ formulairedeconnexion.addEventListener("submit", (event) => {
         .then(data => {
             if (data.token) {
                 localStorage.setItem("token", data.token);
-                sessionStorage.setItem("justLoggedIn", "true"); // 🆕 marqueur temporaire
+                sessionStorage.setItem("justLoggedIn", "true"); //marqueur temporaire
                 window.location.href = "../index.html" // on va vers la page d’accueil
             } else {
                 alert("Identifiants incorrects !")

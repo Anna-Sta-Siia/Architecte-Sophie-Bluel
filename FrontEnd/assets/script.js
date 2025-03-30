@@ -4,14 +4,15 @@ let projets = []; // Tableau global pour stocker les projets
 //  Vérification la mode d'acces
 const cle = localStorage.getItem("token");
 const justLoggedIn = sessionStorage.getItem("justLoggedIn");
-const elementsModeAdmin=document.querySelectorAll(".mode")
+const elementsModeAdmin = document.querySelectorAll(".mode")
 
 
-if (cle !== null && justLoggedIn === "true"){
+if (cle !== null && justLoggedIn === "true") {
   // Mode admin (vraie connexion)
   elementsModeAdmin.forEach(element => {
-    element.classList.remove("normal")});
-  
+    element.classList.remove("normal")
+  });
+
   // On peut ensuite supprimer le marqueur pour éviter qu'il reste
   sessionStorage.removeItem("justLoggedIn");
 }
@@ -21,19 +22,20 @@ fetch("http://localhost:5678/api/works")
   .then(response => response.json())
   .then(data => {
     projets = data; // On stocke les projets dans la variable globale
-    genererlapage(projets); // On affiche tous les projets au chargement
+    genererLaPage(projets); // On affiche tous les projets au chargement
   })
   .catch(error => {
     console.error("Erreur lors de la récupération des travaux :", error);
   });
 
 // Fonction pour générer la galerie 
-function genererlapage(projets) {
+function genererLaPage(projets) {
   gallery.innerHTML = ""; // On vide la galerie avant de la remplir
   for (let i = 0; i < projets.length; i++) {
     const figure = document.createElement("figure");
     const workImage = document.createElement("img");
     workImage.src = projets[i].imageUrl;
+    workImage.alt = projets[i].title;
     const workTitle = document.createElement("figcaption");
     workTitle.innerText = projets[i].title;
     figure.dataset.category = projets[i].category.name; // On ajoute l'attribut data-category
@@ -58,7 +60,7 @@ fetch("http://localhost:5678/api/categories")
 
     // Event listener bouton "Tous"
     boutonTous.addEventListener("click", () => {
-      genererlapage(projets);
+      genererLaPage(projets);
       removeActiveClass();
       boutonTous.classList.add("active");
     });
@@ -74,8 +76,8 @@ fetch("http://localhost:5678/api/categories")
       // Event listener pour filtrer au clic
       bouton.addEventListener("click", () => {
         console.log("Bouton cliqué :", category.name);
-        const projetsFiltres = projets.filter(projet => projet.category.name === category.name);
-        genererlapage(projetsFiltres);
+        const projetsFiltres = projets.filter(projet => projet.category.id === category.id);
+        genererLaPage(projetsFiltres);
         // Enlève la classe active de tous les boutons
         removeActiveClass();
 
@@ -91,11 +93,11 @@ fetch("http://localhost:5678/api/categories")
       const tousLesBoutons = document.querySelectorAll(".boutonsdesfiltres");
       tousLesBoutons.forEach(btn => btn.classList.remove("active"));
     }
-    
+
   })
   .catch(error => {
     console.error("Erreur lors de la récupération des catégories :", error);
   });
 
-  
+
 
