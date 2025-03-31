@@ -10,14 +10,14 @@ const elementsModeAdmin = document.querySelectorAll(".mode")
 if (cle !== null && justLoggedIn === "true") {
   // Mode admin (vraie connexion)
   elementsModeAdmin.forEach(element => {
-    element.classList.remove("normal")
+    element.classList.remove("normal")//pas admin
   });
 
-  // On peut ensuite supprimer le marqueur pour éviter qu'il reste
+  // On peut ensuite supprimer le marqueur
   sessionStorage.removeItem("justLoggedIn");
 }
 
-// Récupération des travaux/works depuis l'API
+// Récupération des works depuis l'API
 fetch("http://localhost:5678/api/works")
   .then(response => response.json())
   .then(data => {
@@ -99,6 +99,7 @@ fetch("http://localhost:5678/api/categories")
     console.error("Erreur lors de la récupération des catégories :", error);
   });
 
+
 //*Afficher la modale au clic *//
 const btnMode = document.querySelector("#portfolio .mode");
 const overlay = document.getElementById("overlay");
@@ -151,7 +152,7 @@ function afficherGalerieDansModale(projets) {
     modalElement.appendChild(modalImage);
     modalElement.appendChild(deleteBtn);
 
-    // Ici, on ajoute l'événement de suppression
+    // On ajoute l'événement de suppression
     deleteBtn.addEventListener("click", () => {
       supprimerImage(projet.id);
     });
@@ -169,7 +170,7 @@ function afficherGalerieDansModale(projets) {
       }
     })
 
-      // 2. Si la suppression a fonctionné...
+      // 2. Si la suppression a fonctionné
       .then(response => {
         if (response.ok) {
           // 3. On enlève ce projet du tableau "projets"
@@ -187,3 +188,12 @@ function afficherGalerieDansModale(projets) {
       .catch(err => console.error("Erreur suppression :", err));
   }
 }
+const ajouterPhotoBtn = document.getElementById("btn-ajouter-photo");
+const formulaireAjout = document.querySelector(".modal-ajout");
+const galerieModale = document.querySelector(".modal-gallery");
+
+
+ajouterPhotoBtn.addEventListener("click", () => {
+  galerieModale.parentElement.classList.add("hidden");
+  formulaireAjout.classList.remove("hidden");
+});

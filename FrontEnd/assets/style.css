@@ -384,7 +384,9 @@ footer nav ul {
 	width: 100%;
 }
 
-.formcontaineur form input {
+.formcontaineur form input,
+.modal-ajout #titre,
+.modal-ajout #categorie {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
@@ -435,25 +437,27 @@ a:hover {
 	z-index: 1000;
 }
 
-.modal {
+.modal,
+.modal-ajout {
 	background: white;
 	padding: 60px 100px 0px 100px;
 	border-radius: 10px;
 	width: 630px;
 	height: 688px;
 	position: relative;
-	top: 150px;
 	box-sizing: border-box;
 }
 
-.modal h3 {
+.modal h3,
+.modal-ajout h3 {
 	font-size: 26px;
 	font-weight: 400;
 	text-align: center;
 	padding-bottom: 50px;
 }
 
-.modal .close {
+.modal .close,
+ .close {
 	position: absolute;
 	top: 15px;
 	right: 20px;
@@ -513,10 +517,71 @@ a:hover {
 	margin: 40px 0;
 }
 
-.modal #btn-ajouter-photo {
+.modal #btn-ajouter-photo,
+.modal-ajout #valider {
 	height: 36px;
 	width: 237px;
 	border-radius: 60px;
-	background-color: #A7A7A7;
+	background-color: #1D6154;
 	color: white;
+}
+
+.modal-ajout #form-ajout-photo {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+
+.modal-ajout .fa-arrow-left {
+	cursor: pointer;
+	position: absolute;
+	top: 15px;
+	left: 20px;
+	font-size: 21px;
+}
+
+.upload-zone {
+	margin-bottom: 35px;
+	background-color: #e8f1f6;
+	border-radius: 5px;
+	text-align: center;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.upload-zone img {
+	width: 75px;
+	height: auto;
+	margin-bottom: 15px;
+}
+
+.custom-upload {
+	display: inline-block;
+	padding: 10px 20px;
+	background-color: #cbdaf0;
+	border-radius: 25px;
+	color: #1D4E89;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.info-fichier {
+	font-size: 12px;
+	color: #444;
+	margin-top: 10px;
+}
+
+.modal-ajout .lignegrise {
+	background-color: #B3B3B3;
+	width: 420px;
+	height: 1px;
+	margin-top: 20px;
+}
+.modal-ajout .btn-valider {
+	display: flex;
+	justify-content: center;
+	margin-top: 15px;
 }

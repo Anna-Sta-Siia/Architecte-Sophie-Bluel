@@ -122,7 +122,7 @@
 			</ul>
 		</nav>
 	</footer>
-	<!--Ajout de la modale-->
+	<!--Ajout de la modale, la première vue-->
 	<div id="overlay" class="hidden">
 		<div class="modal">
 			<span class="close">&times;</span>
@@ -131,6 +131,31 @@
 			<div class="lignegrise"></div>
 			<div class="ajouter-photo"><button id="btn-ajouter-photo">Ajouter une photo</button></div>
 		</div>
+		<!-- Partie ajout photo,la deuxième vue (cachée au début) -->
+<div class="modal-ajout hidden">
+	<i class="fa-solid fa-arrow-left"></i>
+	<span class="close">&times;</span>
+	<h3>Ajout photo</h3>
+  
+	<form id="form-ajout-photo" enctype="multipart/form-data">
+		<div class="upload-zone">
+			<img id="preview" src="assets/icons/Vector .png" alt="preview" />		
+			<input type="file" id="photo" accept="image/*" required hidden />
+			<label for="photo" class="custom-upload">+ Ajouter photo</label>
+		  
+			<p class="info-fichier">jpg, png : 4mo max</p>
+		  </div>
+      <label for="titre">Titre</label>
+	  <input type="text" id="titre"/>
+       <label for="categorie">Catégorie</label>
+	  <select id="categorie" required>
+		<!-- Catégories injectées en JS -->
+	  </select>
+      <div class="lignegrise"></div>
+	  <div class="btn-valider"><button type="submit" id="valider" disabled>Valider</button></div>
+	</form>
+  </div>
+  
 	</div>
 </body>
 
