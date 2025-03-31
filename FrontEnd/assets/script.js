@@ -99,5 +99,91 @@ fetch("http://localhost:5678/api/categories")
     console.error("Erreur lors de la récupération des catégories :", error);
   });
 
+//*Afficher la modale au clic *//
+const btnMode = document.querySelector("#portfolio .mode");
+const overlay = document.getElementById("overlay");
+const closeBtn = document.querySelector(".close");
+
+btnMode.addEventListener("click", () => {
+  overlay.classList.remove("hidden");
+  overlay.classList.add("overlay");
+  afficherGalerieDansModale(projets);
+});
+
+closeBtn.addEventListener("click", () => {
+  overlay.classList.add("hidden");
+  overlay.classList.remove("overlay");
+});
+
+// Fermer la modale en cliquant en dehors
+overlay.addEventListener("click", (event) => {
+  if (event.target === overlay) {
+    overlay.classList.add("hidden");
+    overlay.classList.remove("overlay");
+  }
+});
+
+function afficherGalerieDansModale(projets) {
+  const container = document.querySelector(".modal-gallery");
+  container.innerHTML = ""; // vider l'ancienne galerie
+
+  // Récupération des travaux/works depuis l'API
+  fetch("http://localhost:5678/api/works")
+    .then(response => response.json())
+    .then(data => {
+      projets = data; // On stocke les projets dans la variable globale
+      genererLaPage(projets); // On affiche tous les projets au chargement
+    })
+    .catch(error => {
+      console.error("Erreur lors de la récupération des travaux :", error);
+    });
+  for (let i = 0; i < projets.length; i++) {
+    const projet = projets[i];
+    const modalElement = document.createElement("div");
+    const modalImage = document.createElement("img");
+    modalImage.src = projet.imageUrl;
+    modalImage.alt = projet.title;
+    const deleteBtn = document.createElement("div");
+    const deleteBtnIcon = document.createElement("i");
+    deleteBtnIcon.classList.add("fa-regular", "fa-trash-can");
+    deleteBtn.classList.add("btn-delete");
+    deleteBtn.appendChild(deleteBtnIcon);
+    modalElement.appendChild(modalImage);
+    modalElement.appendChild(deleteBtn);
+
+    // Ici, on ajoute l'événement de suppression
+    deleteBtn.addEventListener("click", () => {
+      supprimerImage(projet.id);
+    });
+    container.appendChild(modalElement);
+  };
 
 
+
+  function supprimerImage(id) {
+    // 1. Envoyer une requête DELETE à l’API pour supprimer l’image avec cet id
+    fetch(`http://localhost:5678/api/works/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // le token d'admin
+      }
+    })
+
+      // 2. Si la suppression a fonctionné...
+      .then(response => {
+        if (response.ok) {
+          // 3. On enlève ce projet du tableau "projets"
+          projets = projets.filter(projet => projet.id !== id);
+
+          // 4. On met à jour la galerie principale sur la page
+          genererLaPage(projets);
+
+          // 5. Et on recharge la galerie dans la modale
+          afficherGalerieDansModale(projets);
+        }
+      })
+
+      // 6. Si erreur, on l'affiche dans la console
+      .catch(err => console.error("Erreur suppression :", err));
+  }
+}

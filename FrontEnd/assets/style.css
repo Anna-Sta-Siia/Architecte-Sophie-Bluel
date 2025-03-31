@@ -416,3 +416,107 @@ a:hover {
 .normal {
 	display: none;
 }
+
+/*La modale*/
+.hidden {
+	display: none;
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+.modal {
+	background: white;
+	padding: 60px 100px 0px 100px;
+	border-radius: 10px;
+	width: 630px;
+	height: 688px;
+	position: relative;
+	top: 150px;
+	box-sizing: border-box;
+}
+
+.modal h3 {
+	font-size: 26px;
+	font-weight: 400;
+	text-align: center;
+	padding-bottom: 50px;
+}
+
+.modal .close {
+	position: absolute;
+	top: 15px;
+	right: 20px;
+	font-size: 24px;
+	cursor: pointer;
+}
+
+.modal-gallery {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
+	column-gap: 10px;
+	row-gap: 30px;
+	padding-bottom: 50px;
+}
+
+.modal-gallery div {
+	display: flex;
+	width: calc(20% - 10px);
+	position: relative;
+}
+
+.modal-gallery div img {
+	width: 76.86px;
+	height: 102.57px;
+	position: relative;
+}
+
+.modal-gallery div .btn-delete {
+	position: absolute;
+	background-color: #000000;
+	width: 17px;
+	height: 17px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	left: 70%;
+	bottom: 77%;
+}
+
+.modal-gallery div .btn-delete i {
+	color: white;
+	padding: 3px;
+	font-size: 12px;
+}
+
+.modal .lignegrise {
+	background-color: #B3B3B3;
+	width: 420px;
+	height: 1px;
+}
+
+.modal .ajouter-photo {
+	display: flex;
+	justify-content: center;
+	margin: 40px 0;
+}
+
+.modal #btn-ajouter-photo {
+	height: 36px;
+	width: 237px;
+	border-radius: 60px;
+	background-color: #A7A7A7;
+	color: white;
+}
