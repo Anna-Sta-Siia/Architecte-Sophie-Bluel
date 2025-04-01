@@ -132,32 +132,39 @@
 			<div class="ajouter-photo"><button id="btn-ajouter-photo">Ajouter une photo</button></div>
 		</div>
 		<!-- Partie ajout photo,la deuxième vue (cachée au début) -->
-<div class="modal-ajout hidden">
-	<i class="fa-solid fa-arrow-left"></i>
-	<span class="close">&times;</span>
-	<h3>Ajout photo</h3>
-  
-	<form id="form-ajout-photo" enctype="multipart/form-data">
-		<!-- enctype c'est comment encoder les données du formulaire quand on les envoie au serveur -->
-		 <!-- "multipart/form-data", c'est pour envoyer texte + fichier ensemble -->
-		<div class="upload-zone">
-			<img id="preview" src="assets/icons/Vector .png" alt="preview" />		
-			<input type="file" id="photo" accept=".jpg, .jpeg, .png" required hidden />
-			<label for="photo" class="custom-upload">+ Ajouter photo</label>
-		  <!-- Label for=photo et input type=file et id=photo declanche l'ouverture de la fenetre-->
-			<p class="info-fichier">jpg, png: 4mo max</p>
-		  </div>
-      <label for="titre">Titre</label>
-	  <input type="text" id="titre" required/>
-       <label for="categorie">Catégorie</label>
-	  <select id="categorie" required>
-		<!-- Catégories injectées en JS -->
-	  </select>
-      <div class="lignegrise"></div>
-	  <div class="btn-valider"><button type="submit" id="valider" disabled>Valider</button></div>
-	</form>
-  </div>
-  
+		<div class="modal-ajout hidden">
+			<i class="fa-solid fa-arrow-left"></i>
+			<span class="close">&times;</span><!--entité HTML pour le symbole "croix"-->
+			<h3>Ajout photo</h3>
+
+			<form id="form-ajout-photo" enctype="multipart/form-data">
+				<!-- enctype c'est comment encoder les données du formulaire quand on les envoie au serveur -->
+				<!-- "multipart/form-data", c'est pour envoyer texte + fichier ensemble -->
+				<div class="upload-zone">
+					<!-- Icône par défaut -->
+					<img class="preview" src="assets/icons/Vector .png" alt="preview" />
+					<!-- Image choisie -->
+					<img class="imagechoisi hidden" />
+					<!-- Input caché -->
+					<input type="file" id="photo" accept=".jpg, .jpeg, .png" required hidden />
+					<!-- Bouton "Ajouter" -->
+					<div class="elements_a_cacher">
+						<label for="photo" class="custom-upload">+ Ajouter photo</label>
+						<!-- Label for=photo et input type=file et id=photo declanche l'ouverture de la fenetre-->
+						<p class="info-fichier">jpg, png: 4mo max</p>
+					</div>
+				</div>
+				<label for="titre">Titre</label>
+				<input type="text" id="titre" required />
+				<label for="categorie">Catégorie</label>
+				<select id="categorie" required>
+					<!-- Catégories par JS+1option vide pour le debut du menu déroulant -->
+				</select>
+				<div class="lignegrise"></div>
+				<div class="btn-valider"><button type="submit" id="valider" disabled>Valider</button></div>
+			</form>
+		</div>
+
 	</div>
 </body>
 

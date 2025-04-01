@@ -205,7 +205,7 @@ function chargerCategories() {
     .then(response => response.json())
     .then(categories => {
       const select = document.getElementById("categorie");
-      select.innerHTML = `<option value=""></option>`; 
+      select.innerHTML = `<option value=""></option>`; //on ajout la champ vide au debut
 
       categories.forEach(cat => {
         const option = document.createElement("option");
@@ -216,6 +216,43 @@ function chargerCategories() {
     });
 }
 
+const photoInput = document.getElementById("photo");
+const imageChoisie = document.querySelector(".imagechoisi");
+const previewIcone = document.querySelector(".preview");
+const elementsACacher=document.querySelector(".elements_a_cacher")
+const erreurPhoto = document.createElement("p");
+erreurPhoto.classList.add("erreur");
+const uploadZone = document.querySelector(".upload-zone");
+uploadZone.appendChild(erreurPhoto);
 
+photoInput.addEventListener("change", () => { //on écout l'ajout de la photo
+  const file = photoInput.files[0];//correspond au premier fichier sélectionné
+  if (!file) return;//Si rien n’est choisi->on quitte la fonction
 
+  const validTypes = ["image/jpeg", "image/png"];//on crée une liste de formats autorisés
+  if (!validTypes.includes(file.type)) { //si le format du fichier choisi ne rentre pas dans notre liste
+    erreurPhoto.textContent = "Format invalide."; //message d'erreur s'affiche
+    return;
+  }
 
+  if (file.size > 4 * 1024 * 1024) {//on vérifie que le fichier ne dépasse 4 Mo
+    erreurPhoto.textContent = "Fichier trop lourd.";//si le fichier est trop lourd->message d'erreur s'affiche
+    return;
+  }
+
+  erreurPhoto.textContent = ""; // tout va bien
+
+  const reader = new FileReader();//on crée un lecteur de fichier, 
+                                // FileReader, c'est un outil de JS pour lire le contenue d'un fichier local
+  reader.onload = function (e) {//quand le fichier est lu(onload), on appel une focntion avec la paramètre e,
+                                //  ou e contient les données du fichier
+    imageChoisie.src = e.target.result;//le contenue encodé du fichier (image au format base64)
+    imageChoisie.alt = file.name;
+
+    imageChoisie.classList.remove("hidden");
+    previewIcone.classList.add("hidden");
+    elementsACacher.classList.add("hidden");
+  };
+  reader.readAsDataURL(file); //le reader lit le fichier et transforme son contenu en une sorte de lien spécial,
+                             //une Data URL.
+});

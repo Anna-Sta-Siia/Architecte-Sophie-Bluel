@@ -420,10 +420,10 @@ a:hover {
 }
 
 /*La modale*/
+
 .hidden {
 	display: none;
 }
-
 .overlay {
 	position: fixed;
 	top: 0;
@@ -546,18 +546,24 @@ a:hover {
 	background-color: #e8f1f6;
 	border-radius: 5px;
 	text-align: center;
-	padding: 20px;
+	height: 169px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
 
-.upload-zone img {
-	width: 75px;
-	height: auto;
+.upload-zone .preview {
+	width: 68px;
+	height: 59px;
 	margin-bottom: 15px;
+	margin-top: 20px;
 }
+.upload-zone .imagechoisi{
+	width: 129px;
+	height: 100%;
+	object-fit: cover;
 
+} 
 .custom-upload {
 	display: inline-block;
 	padding: 10px 20px;
@@ -574,7 +580,10 @@ a:hover {
 	margin-top: 10px;
 	font-weight: 400;
 }
-
+.modal-ajout #categorie option, .modal-ajout #titre {
+	font-size: 14px;
+	font-weight: 400;
+}
 .modal-ajout .lignegrise {
 	background-color: #B3B3B3;
 	width: 420px;
@@ -586,8 +595,11 @@ a:hover {
 	justify-content: center;
 	margin-top: 15px;
 }
+.erreur {
+	color: red;
+	font-size: 12px;
+	text-align: center;
+	margin-top: 5px;
+  }
 
-.modal-ajout #categorie option, .modal-ajout #titre {
-	font-size: 14px;
-	font-weight: 400;
-}
+ 
