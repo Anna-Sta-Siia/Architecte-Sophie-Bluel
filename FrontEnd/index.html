@@ -138,15 +138,17 @@
 	<h3>Ajout photo</h3>
   
 	<form id="form-ajout-photo" enctype="multipart/form-data">
+		<!-- enctype c'est comment encoder les données du formulaire quand on les envoie au serveur -->
+		 <!-- "multipart/form-data", c'est pour envoyer texte + fichier ensemble -->
 		<div class="upload-zone">
 			<img id="preview" src="assets/icons/Vector .png" alt="preview" />		
-			<input type="file" id="photo" accept="image/*" required hidden />
+			<input type="file" id="photo" accept=".jpg, .jpeg, .png" required hidden />
 			<label for="photo" class="custom-upload">+ Ajouter photo</label>
-		  
-			<p class="info-fichier">jpg, png : 4mo max</p>
+		  <!-- Label for=photo et input type=file et id=photo declanche l'ouverture de la fenetre-->
+			<p class="info-fichier">jpg, png: 4mo max</p>
 		  </div>
       <label for="titre">Titre</label>
-	  <input type="text" id="titre"/>
+	  <input type="text" id="titre" required/>
        <label for="categorie">Catégorie</label>
 	  <select id="categorie" required>
 		<!-- Catégories injectées en JS -->

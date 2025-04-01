@@ -188,6 +188,7 @@ function afficherGalerieDansModale(projets) {
       .catch(err => console.error("Erreur suppression :", err));
   }
 }
+// On passe à la deuxième vue
 const ajouterPhotoBtn = document.getElementById("btn-ajouter-photo");
 const formulaireAjout = document.querySelector(".modal-ajout");
 const galerieModale = document.querySelector(".modal-gallery");
@@ -196,4 +197,25 @@ const galerieModale = document.querySelector(".modal-gallery");
 ajouterPhotoBtn.addEventListener("click", () => {
   galerieModale.parentElement.classList.add("hidden");
   formulaireAjout.classList.remove("hidden");
+  chargerCategories(); //on charge les catégories de l'API
 });
+
+function chargerCategories() {
+  fetch("http://localhost:5678/api/categories")
+    .then(response => response.json())
+    .then(categories => {
+      const select = document.getElementById("categorie");
+      select.innerHTML = `<option value=""></option>`; 
+
+      categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat.id;
+        option.textContent = cat.name;
+        select.appendChild(option);
+      });
+    });
+}
+
+
+
+
