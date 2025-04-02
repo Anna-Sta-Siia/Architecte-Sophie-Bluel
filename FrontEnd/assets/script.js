@@ -38,7 +38,7 @@ function genererLaPage(projets) {
     workImage.alt = projets[i].title;
     const workTitle = document.createElement("figcaption");
     workTitle.innerText = projets[i].title;
-    figure.dataset.category = projets[i].category.name; // On ajoute l'attribut data-category
+    //figure.dataset.category = projets[i].category.name; // On ajoute l'attribut data-category
     figure.appendChild(workImage);
     figure.appendChild(workTitle);
     gallery.appendChild(figure);
@@ -108,12 +108,15 @@ const closeBtn = document.querySelector(".close");
 btnMode.addEventListener("click", () => {
   overlay.classList.remove("hidden");
   overlay.classList.add("overlay");
+  formulaireAjout.classList.add("hidden"); // revient toujours à la vue 1
+  document.querySelector(".modal").classList.remove("hidden");
   afficherGalerieDansModale(projets);
 });
 
 closeBtn.addEventListener("click", () => {
   overlay.classList.add("hidden");
   overlay.classList.remove("overlay");
+  resetFormulaireAjout(); //on vide le formulaire
 });
 
 // Fermer la modale en cliquant en dehors
@@ -121,15 +124,16 @@ overlay.addEventListener("click", (event) => {
   if (event.target === overlay) {
     overlay.classList.add("hidden");
     overlay.classList.remove("overlay");
+    resetFormulaireAjout(); //on vide le formulaire
   }
 });
 
-function afficherGalerieDansModale(projets) {
+async function afficherGalerieDansModale(projets) {
   const container = document.querySelector(".modal-gallery");
   container.innerHTML = ""; // vider l'ancienne galerie
 
   // Récupération des travaux/works depuis l'API
-  fetch("http://localhost:5678/api/works")
+  await fetch("http://localhost:5678/api/works")
     .then(response => response.json())
     .then(data => {
       projets = data; // On stocke les projets dans la variable globale
@@ -159,7 +163,15 @@ function afficherGalerieDansModale(projets) {
     container.appendChild(modalElement);
   };
 
+  const retourBtn = document.querySelector(".fa-arrow-left");
 
+  retourBtn.addEventListener("click", () => {
+    formulaireAjout.classList.add("hidden");
+    document.querySelector(".modal").classList.remove("hidden");
+  
+    resetFormulaireAjout(); //on vide le formulaire
+  });
+  
 
   function supprimerImage(id) {
     // 1. Envoyer une requête DELETE à l’API pour supprimer l’image avec cet id
@@ -189,6 +201,7 @@ function afficherGalerieDansModale(projets) {
   }
 }
 // On passe à la deuxième vue
+
 const ajouterPhotoBtn = document.getElementById("btn-ajouter-photo");
 const formulaireAjout = document.querySelector(".modal-ajout");
 const galerieModale = document.querySelector(".modal-gallery");
@@ -197,6 +210,7 @@ const galerieModale = document.querySelector(".modal-gallery");
 ajouterPhotoBtn.addEventListener("click", () => {
   galerieModale.parentElement.classList.add("hidden");
   formulaireAjout.classList.remove("hidden");
+  checkForm(); // Lancer la vérification dès le début
   chargerCategories(); //on charge les catégories de l'API
 });
 
@@ -215,44 +229,130 @@ function chargerCategories() {
       });
     });
 }
-
 const photoInput = document.getElementById("photo");
+const titreInput = document.getElementById("titre");
+const categorieSelect = document.getElementById("categorie");
+const validerBtn = document.getElementById("valider");
+
 const imageChoisie = document.querySelector(".imagechoisi");
 const previewIcone = document.querySelector(".preview");
-const elementsACacher=document.querySelector(".elements_a_cacher")
-const erreurPhoto = document.createElement("p");
-erreurPhoto.classList.add("erreur");
-const uploadZone = document.querySelector(".upload-zone");
-uploadZone.appendChild(erreurPhoto);
+const elementsACacher = document.querySelector(".elements_a_cacher");
 
-photoInput.addEventListener("change", () => { //on écout l'ajout de la photo
-  const file = photoInput.files[0];//correspond au premier fichier sélectionné
-  if (!file) return;//Si rien n’est choisi->on quitte la fonction
+// 1. Vérifie la photo au changement
+photoInput.addEventListener("change", () => {
+  const file = photoInput.files[0];// 1 photo choisie
+  const validTypes = ["image/jpeg", "image/png"];//la liste des formats acceptés
 
-  const validTypes = ["image/jpeg", "image/png"];//on crée une liste de formats autorisés
-  if (!validTypes.includes(file.type)) { //si le format du fichier choisi ne rentre pas dans notre liste
-    erreurPhoto.textContent = "Format invalide."; //message d'erreur s'affiche
+  if (!file) {//si rien est choici
     return;
   }
 
-  if (file.size > 4 * 1024 * 1024) {//on vérifie que le fichier ne dépasse 4 Mo
-    erreurPhoto.textContent = "Fichier trop lourd.";//si le fichier est trop lourd->message d'erreur s'affiche
+  if (!validTypes.includes(file.type)) {//si le format n'est pas correct
     return;
   }
 
-  erreurPhoto.textContent = ""; // tout va bien
+  if (file.size > 4 * 1024 * 1024) {//si le fichier est trop lourd
+    return;
+  }
 
-  const reader = new FileReader();//on crée un lecteur de fichier, 
-                                // FileReader, c'est un outil de JS pour lire le contenue d'un fichier local
-  reader.onload = function (e) {//quand le fichier est lu(onload), on appel une focntion avec la paramètre e,
-                                //  ou e contient les données du fichier
-    imageChoisie.src = e.target.result;//le contenue encodé du fichier (image au format base64)
+  // Tout est bon, on affiche l’image
+  const reader = new FileReader();// File Reader c'est un outil de JS
+  reader.onload = function (event) {//ici on dit, qu'une fois le fichier est lu(unload)on lance la focntion
+    imageChoisie.src = event.target.result;
     imageChoisie.alt = file.name;
 
     imageChoisie.classList.remove("hidden");
     previewIcone.classList.add("hidden");
     elementsACacher.classList.add("hidden");
+
+    checkForm(); // on vérifie si tout est prêt
   };
-  reader.readAsDataURL(file); //le reader lit le fichier et transforme son contenu en une sorte de lien spécial,
-                             //une Data URL.
+  reader.readAsDataURL(file);
 });
+
+// 2. Vérifie le titre à chaque changement
+titreInput.addEventListener("input", () => {
+  if (titreInput.value.trim() !== "") {
+  checkForm();
+  }
+});
+
+// 3. Vérifie la catégorie à chaque changement
+categorieSelect.addEventListener("change", () => {
+  if (categorieSelect.value !== "") {
+ checkForm();
+  }
+ 
+});
+
+// 4. Active le bouton uniquement si tout est OK
+function checkForm() {
+  const file = photoInput.files[0];
+  const titre = titreInput.value.trim();
+  const categorie = categorieSelect.value;
+
+  const validTypes = ["image/jpeg", "image/png"];
+  const isValid = file &&
+    validTypes.includes(file.type) &&
+    file.size <= 4 * 1024 * 1024 &&
+    titre !== "" &&
+    categorie !== "";
+
+  validerBtn.disabled = !isValid;
+  validerBtn.style.backgroundColor = isValid ? "#1D6154" : "#A7A7A7";//opérateur ternaire
+}
+
+//Ajouter une photo
+
+const formAjout = document.getElementById("form-ajout-photo");
+
+formAjout.addEventListener("submit", (event) => {
+  event.preventDefault(); // Empêche le rechargement de la page
+
+  const formData = new FormData();//création d'un objet Formadata pour envoyer la photo + le texte à l'API
+  formData.append("image", photoInput.files[0]);
+  formData.append("title", titreInput.value);
+  formData.append("category", Number(categorieSelect.value)); //
+
+
+  fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    },
+    body: formData
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'ajout");
+      }
+      return response.json();
+    })
+    .then(nouveauProjet => {
+      // 1. Ajouter à la liste existante
+      projets.push(nouveauProjet); //on ajoute le nouveau projet renvoyé par l’API dans notre tableau projets
+
+      // 2. Mettre à jour la galerie principale et la modale
+      genererLaPage(projets);
+      afficherGalerieDansModale(projets);
+
+      //  3. Réinitialiser le formulaire
+      resetFormulaireAjout()
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Une erreur est survenue lors de l'ajout.");
+    });
+});
+function resetFormulaireAjout() {
+  formAjout.reset();
+  validerBtn.disabled = true;
+  validerBtn.style.backgroundColor = "#A7A7A7";
+
+  imageChoisie.src = "";
+  imageChoisie.alt = "";
+  imageChoisie.classList.add("hidden");
+  previewIcone.classList.remove("hidden");
+  elementsACacher.classList.remove("hidden");
+}
+
