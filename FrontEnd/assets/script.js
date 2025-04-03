@@ -2,19 +2,16 @@ const gallery = document.querySelector(".gallery"); // On récupère la balise p
 let projets = []; // Tableau global pour stocker les projets
 
 //  Vérification la mode d'acces
-const cle = localStorage.getItem("token");
-const justLoggedIn = sessionStorage.getItem("justLoggedIn");
-const elementsModeAdmin = document.querySelectorAll(".mode")
+const cle =  sessionStorage.getItem("token");
+const elementsModeAdmin = document.querySelectorAll(".mode");
 
 
-if (cle !== null && justLoggedIn === "true") {
+if (cle !== null) {
   // Mode admin (vraie connexion)
   elementsModeAdmin.forEach(element => {
     element.classList.remove("normal")//pas admin
   });
 
-  // On peut ensuite supprimer le marqueur
-  sessionStorage.removeItem("justLoggedIn");
 }
 
 // Récupération des works depuis l'API
@@ -178,7 +175,7 @@ async function afficherGalerieDansModale(projets) {
     fetch(`http://localhost:5678/api/works/${id}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`, // le token d'admin
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`, // le token d'admin
       }
     })
 
@@ -318,7 +315,7 @@ formAjout.addEventListener("submit", (event) => {
   fetch("http://localhost:5678/api/works", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`
     },
     body: formData
   })
