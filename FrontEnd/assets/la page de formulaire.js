@@ -1,18 +1,25 @@
-
 // Récupération des éléments
 const formulaireDeConnexion = document.querySelector("form");
 const inputEmail = document.getElementById("email");
 const inputMdp = document.getElementById("motDePasse");
+const messageDErreur = document.createElement("p");
+messageDErreur.classList.add("message-erreur");
+messageDErreur.classList.add("hidden")
+const boutonDeSubmit = document.querySelector(".seconnecter");
+boutonDeSubmit.before(messageDErreur);
 
-
-// Dès qu'on arrive sur la page de connexion
+// Réinitialisation du formulaire à l’arrivée
 window.addEventListener("pageshow", () => {
-  
-    // Et on vide les champs du formulaire
-    document.getElementById("email").value = "";
-    document.getElementById("motDePasse").value = "";
-  });
+    inputEmail.value = "";
+    inputMdp.value = "";
+   
+});
 
+// Dès que l’utilisateur modifie le mot de passe → on efface l'erreur
+inputMdp.addEventListener("input", () => {
+    messageDErreur.classList.remove("hidden")
+    messageDErreur.textContent = "";
+});
 
 // Lors de la soumission du formulaire
 formulaireDeConnexion.addEventListener("submit", (event) => {
@@ -30,20 +37,20 @@ formulaireDeConnexion.addEventListener("submit", (event) => {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error("Erreur HTTP : " + response.status);
+    
+                messageDErreur.textContent = "Le mot de passe est incorrect. Veuillez réessayer.";
             }
             return response.json();
         })
         .then(data => {
             if (data.token) {
+                messageDErreur.textContent = ""; // tout est bon
                 sessionStorage.setItem("token", data.token);
                 window.location.href = "../index.html";
-            } else {
-                alert("Identifiants incorrects !");
             }
         })
         .catch(err => {
             console.error(err);
-            alert("Erreur lors de la connexion. Vérifie l’URL ou si le serveur est bien lancé.");
+            messageDErreur.textContent = "Erreur de connexion. Vérifie l’URL ou le serveur.";
         });
 });
