@@ -140,7 +140,7 @@ body {
 	margin: auto;
 	font-family: 'Work Sans';
 	font-size: 14px;
-	overflow-x: hidden; 
+	overflow-x: hidden;
 	background-color: #FAF9F3;
 }
 
@@ -173,12 +173,13 @@ header {
 	justify-content: space-between;
 	margin: 50px 0
 }
+
 main {
-	margin-top: 60px; 
+	margin-top: 60px;
 }
 
 section {
-	margin: 50px 0
+	margin: 50px 100px;
 }
 
 h1 {
@@ -223,6 +224,7 @@ li:hover {
 #introduction {
 	display: flex;
 	align-items: center;
+	gap: 60px;
 }
 
 #introduction figure {
@@ -232,11 +234,12 @@ li:hover {
 #introduction img {
 	display: block;
 	margin: auto;
-	width: 80%;
+	width: 100%;
+
 }
 
 #introduction article {
-	flex: 1
+	width: 404px;
 }
 
 #introduction h2 {
@@ -284,18 +287,20 @@ li:hover {
 	display: flex;
 	gap: 15px;
 	justify-content: center;
-	padding-bottom: 40px;
 	padding-top: 20px;
 }
 
 .boutonsdesfiltres {
 	border-radius: 60px;
 	font-size: 16px;
+	font-weight: 700;
 	color: #1D6154;
 	border-color: #1D6154;
-	font-family: 'Work Sans';
+	font-family: 'Syne';
 	padding: 10px 20px;
 	background-color: transparent;
+	border-width: 1px;
+	border-style: solid;
 
 }
 
@@ -308,8 +313,9 @@ li:hover {
 	width: 100%;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
-	grid-column-gap: 20px;
-	grid-row-gap: 20px;
+	grid-column-gap: 12px;
+	grid-row-gap: 40px;
+	margin-top: 60px;
 }
 
 .gallery img {
@@ -317,9 +323,19 @@ li:hover {
 
 }
 
+#portfolio figure {
+	width: 305px;
+	height: 407px;
+}
+
+#portfolio figcaption {
+	padding-top: 5px;
+	font-size: 13px;
+}
+
 #contact {
-	width: 50%;
-	margin: auto;
+	width: 33%;
+	margin: 80px auto 0 auto;
 }
 
 #contact>* {
@@ -333,7 +349,7 @@ li:hover {
 
 #contact form {
 	text-align: left;
-	margin-top: 30px;
+	margin-top: 15px;
 	display: flex;
 	flex-direction: column;
 }
@@ -346,7 +362,7 @@ li:hover {
 }
 
 #contact label {
-	margin: 2em 0 1em 0;
+	margin: 2em 0 0.5em 0;
 }
 
 #contact textarea {
@@ -364,13 +380,14 @@ input[type="submit"] {
 	text-align: center;
 	border-radius: 60px;
 }
-footer{
-		margin-left: calc(-50vw + 50%);
-		margin-right: calc(-50vw + 50%);
-		background-color: white;
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
+
+footer {
+	margin-left: calc(-50vw + 50%);
+	margin-right: calc(-50vw + 50%);
+	background-color: white;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
 }
 
 footer nav ul {
@@ -383,7 +400,7 @@ footer nav ul {
 	align-items: center;
 	gap: 15px;
 	width: 50%;
-	margin: 65px auto 130px auto;
+	margin: 180px auto 345px auto;
 }
 
 .formcontaineur form {
@@ -391,12 +408,12 @@ footer nav ul {
 	flex-direction: column;
 	align-items: center;
 	text-align: left;
-	width: 68%;
+	width: 66.5%;
 	margin-bottom: -10px;
 }
 
 .formcontaineur form label {
-	margin: 2em 0 1em 0;
+	margin: 2em 0 0.5em 0;
 	width: 100%;
 }
 
@@ -411,15 +428,11 @@ footer nav ul {
 }
 
 .formcontaineur form .seconnecter {
-	font-family: 'Syne';
-	font-weight: 700;
-	color: white;
-	background-color: #1D6154;
-	margin: 2em auto;
 	width: 180px;
-	text-align: center;
-	border-radius: 60px;
-	margin-top: 5px;
+	margin-top: -5px;
+	height: 36px;
+	font-size: 14px;
+	box-sizing: border-box;
 }
 
 
@@ -455,6 +468,7 @@ a:hover {
 	align-items: center;
 	z-index: 1000;
 }
+
 
 .modal,
 .modal-ajout {
@@ -530,10 +544,14 @@ a:hover {
 	height: 1px;
 }
 
-.modal .ajouter-photo {
+.modal .btn-ajouter-photo,
+.modal-ajout .btn-valider {
 	display: flex;
-	justify-content: center;
-	margin: 40px 0;
+	flex-direction: column;
+	align-items: center;
+	position: absolute;
+	bottom: 40px;
+	gap: 40px;
 }
 
 .modal #btn-ajouter-photo,
@@ -543,6 +561,10 @@ a:hover {
 	border-radius: 60px;
 	background-color: #1D6154;
 	color: white;
+	border: none;
+	font-family: 'Syne';
+	font-size: 14px;
+	font-weight: 700;
 }
 
 .modal-ajout #form-ajout-photo {
@@ -615,12 +637,7 @@ a:hover {
 	margin-top: 20px;
 }
 
-.modal-ajout .btn-valider {
-	display: flex;
-	justify-content: center;
-	margin-top: 15px;
 
-}
 
 .message-erreur {
 	color: red;
@@ -634,11 +651,10 @@ input:-webkit-autofill {
 	background-color: white !important;
 	color: black !important;
 	transition: background-color 9999s ease-in-out 0s;
-  }
-  
+}
 
-  input:-moz-autofill {
+
+input:-moz-autofill {
 	background-color: white !important;
 	color: black !important;
-  }
-  
+}

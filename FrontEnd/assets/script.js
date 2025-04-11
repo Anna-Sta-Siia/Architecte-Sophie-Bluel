@@ -1,15 +1,19 @@
 const gallery = document.querySelector(".gallery"); // On récupère la balise parent pour les works
 let projets = []; // Tableau global pour stocker les projets
 
+// Création du conteneur pour les boutons
+const divButons = document.createElement("div");
+
 //  Vérification la mode d'acces
-const cle =  sessionStorage.getItem("token");
+const cle = sessionStorage.getItem("token");
 const elementsModeAdmin = document.querySelectorAll(".mode");
 
 
 if (cle !== null) {
-  // Mode admin (vraie connexion)
+  // Mode admin 
   elementsModeAdmin.forEach(element => {
     element.classList.remove("normal")//pas admin
+    divButons.classList.add("hidden")
   });
 
 }
@@ -41,21 +45,16 @@ function genererLaPage(projets) {
     gallery.appendChild(figure);
   }
 }
-
-//Récupération des catégories et création des boutons
-fetch("http://localhost:5678/api/categories")
+// Récupération des catégories depuis works et création des boutons
+fetch("http://localhost:5678/api/works")
   .then(response => response.json())
-  .then(categories => {
-    // Création du conteneur pour les boutons
-    const divButons = document.createElement("div");
+  .then(works => {
     divButons.classList.add("container-boutons");
 
-    // On crée un bouton "Tous"
     const boutonTous = document.createElement("button");
     boutonTous.innerText = "Tous";
     boutonTous.classList.add("boutonsdesfiltres");
 
-    // Event listener bouton "Tous"
     boutonTous.addEventListener("click", () => {
       genererLaPage(projets);
       removeActiveClass();
@@ -63,39 +62,49 @@ fetch("http://localhost:5678/api/categories")
     });
     divButons.appendChild(boutonTous);
 
-    // Création des boutons pour chaque catégorie
-    categories.forEach(category => {
+    // --- On combine Set et tableau pour garder les objets complets ---
+    const idSet = new Set();
+    const listeDesCategories = [];
+
+    works.forEach(work => {
+      const id = work.category.id;
+      const name = work.category.name;
+
+      if (!idSet.has(id)) {
+        idSet.add(id);
+        listeDesCategories.push({ id, name });
+      }
+    });
+
+    // --- Tri du tableau par ID ---
+    listeDesCategories.sort((a, b) => a.id - b.id);
+
+    // --- Création des boutons triés ---
+    listeDesCategories.forEach(category => {
       const bouton = document.createElement("button");
       bouton.innerText = category.name;
       bouton.classList.add("boutonsdesfiltres");
 
-
-      // Event listener pour filtrer au clic
       bouton.addEventListener("click", () => {
-        console.log("Bouton cliqué :", category.name);
         const projetsFiltres = projets.filter(projet => projet.category.id === category.id);
         genererLaPage(projetsFiltres);
-        // Enlève la classe active de tous les boutons
         removeActiveClass();
-
-        // Ajoute la classe active au bouton cliqué
         bouton.classList.add("active");
       });
+
       divButons.appendChild(bouton);
     });
-    // On place le div contenant tous les boutons avant la galerie
+
     gallery.before(divButons);
 
     function removeActiveClass() {
-      const tousLesBoutons = document.querySelectorAll(".boutonsdesfiltres");
-      tousLesBoutons.forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".boutonsdesfiltres")
+              .forEach(btn => btn.classList.remove("active"));
     }
-
   })
   .catch(error => {
-    console.error("Erreur lors de la récupération des catégories :", error);
+    console.error("Erreur lors de la récupération des travaux(categories):", error);
   });
-
 
 //*Afficher la modale au clic *//
 const btnMode = document.querySelector("#portfolio .mode");
@@ -165,10 +174,10 @@ async function afficherGalerieDansModale(projets) {
   retourBtn.addEventListener("click", () => {
     formulaireAjout.classList.add("hidden");
     document.querySelector(".modal").classList.remove("hidden");
-  
+
     resetFormulaireAjout(); //on vide le formulaire
   });
-  
+
 
   function supprimerImage(id) {
     // 1. Envoyer une requête DELETE à l’API pour supprimer l’image avec cet id
@@ -216,8 +225,8 @@ function chargerCategories() {
     .then(response => response.json())
     .then(categories => {
       const select = document.getElementById("categorie");
-      select.innerHTML = `<option value=""></option>`; //on ajout la champ vide au debut
-
+      //On vide le <select> avant d'ajouter de nouvelles options
+      select.innerHTML = "<option value='' label=' '></option>";
       categories.forEach(cat => {
         const option = document.createElement("option");
         option.value = cat.id;
@@ -254,7 +263,7 @@ photoInput.addEventListener("change", () => {
 
   // Tout est bon, on affiche l’image
   const reader = new FileReader();// File Reader c'est un outil de JS
-  reader.onload = function (event) {//ici on dit, qu'une fois le fichier est lu(unload)on lance la focntion
+  reader.onload = function (event) {//ici on dit, qu'une fois le fichier est lu(unload), on lance la focntion
     imageChoisie.src = event.target.result;
     imageChoisie.alt = file.name;
 
@@ -270,16 +279,16 @@ photoInput.addEventListener("change", () => {
 // 2. Vérifie le titre à chaque changement
 titreInput.addEventListener("input", () => {
   if (titreInput.value.trim() !== "") {
-  checkForm();
+    checkForm();
   }
 });
 
 // 3. Vérifie la catégorie à chaque changement
 categorieSelect.addEventListener("change", () => {
   if (categorieSelect.value !== "") {
- checkForm();
+    checkForm();
   }
- 
+
 });
 
 // 4. Active le bouton uniquement si tout est OK
@@ -309,7 +318,7 @@ formAjout.addEventListener("submit", (event) => {
   const formData = new FormData();//création d'un objet Formadata pour envoyer la photo + le texte à l'API
   formData.append("image", photoInput.files[0]);
   formData.append("title", titreInput.value);
-  formData.append("category", Number(categorieSelect.value)); //
+  formData.append("category", categorieSelect.value); //
 
 
   fetch("http://localhost:5678/api/works", {
@@ -333,8 +342,11 @@ formAjout.addEventListener("submit", (event) => {
       genererLaPage(projets);
       afficherGalerieDansModale(projets);
 
-      //  3. Réinitialiser le formulaire
+      //  3. Réinitialiser et fermer le formulaire
       resetFormulaireAjout()
+      formulaireAjout.classList.add("hidden");
+      overlay.classList.add("hidden");
+      overlay.classList.remove("overlay");
     })
     .catch(err => {
       console.error(err);
