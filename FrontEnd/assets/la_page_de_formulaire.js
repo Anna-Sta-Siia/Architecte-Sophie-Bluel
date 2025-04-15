@@ -12,7 +12,7 @@ boutonDeSubmit.before(messageDErreur);
 window.addEventListener("pageshow", () => {
     inputEmail.value = "";
     inputMdp.value = "";
-   
+
 });
 
 // Lors de la soumission du formulaire
@@ -31,7 +31,7 @@ formulaireDeConnexion.addEventListener("submit", (event) => {
     })
         .then(response => {
             if (!response.ok) {
-    
+
                 messageDErreur.textContent = "Le mot de passe est incorrect. Veuillez réessayer.";
             }
             return response.json();

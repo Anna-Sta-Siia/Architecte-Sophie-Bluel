@@ -99,7 +99,7 @@ fetch("http://localhost:5678/api/works")
 
     function removeActiveClass() {
       document.querySelectorAll(".boutonsdesfiltres")
-              .forEach(btn => btn.classList.remove("active"));
+        .forEach(btn => btn.classList.remove("active"));
     }
   })
   .catch(error => {
