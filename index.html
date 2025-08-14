@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirection…</title>
+
+    <!-- Redirection immédiate vers FrontEnd/ (chemin RELATIF) -->
+    <meta http-equiv="refresh" content="0; url=./FrontEnd/">
+    <link rel="canonical" href="./FrontEnd/">
+
+    <!-- Fallback JS (plus fiable si le meta est bloqué) -->
+    <script>
+      // Chemin relatif pour respecter le sous-chemin GitHub Pages (…/Architecte-Sophie-Bluel/)
+      location.replace('./FrontEnd/');
+    </script>
+
+    <style>
+      html,body{height:100%}
+      body{
+        font:16px system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        display:grid; place-items:center; margin:0; background:#fff;
+      }
+      a{color:#2f62ff;text-decoration:underline}
+    </style>
+  </head>
+  <body>
+    <p>Redirection vers <a href="./FrontEnd/">FrontEnd/</a>…</p>
+  </body>
+</html>
