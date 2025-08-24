@@ -1,3 +1,12 @@
-node_modules
+# Dépendances
+node_modules/
 
+# SECRETS (ne jamais committer)
+.env
+
+# Données locales
+database.sqlite
+
+# Uploads locaux (si pas Cloudinary)
+images/*
 !images/.gitkeep

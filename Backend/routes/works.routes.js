@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const multer = require('../middlewares/multer-config');
 const auth = require('../middlewares/auth');
+const upload = require('../middlewares/multer-config'); // .single('image') déjà dans le middleware
 const checkWork = require('../middlewares/checkWork');
 const workCtrl = require('../controllers/works.controller');
 
-router.post('/', auth, multer, checkWork, workCtrl.create);
 router.get('/', workCtrl.findAll);
+router.post('/', auth, upload, checkWork, workCtrl.create);
 router.delete('/:id', auth, workCtrl.delete);
 
 module.exports = router;

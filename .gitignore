@@ -1,2 +1,22 @@
-.idea
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Dépendances (n'importe où)
 node_modules/
+
+# --- Ceinture + bretelles pour le backend ---
+# Secrets
+Backend/.env
+
+# Données locales
+Backend/database.sqlite
+
+# Uploads locaux (en prod on passe par Cloudinary)
+Backend/images/*
+!Backend/images/.gitkeep
+
+# (optionnel) artefacts de build front si tu en génères
+FrontEnd/dist/
