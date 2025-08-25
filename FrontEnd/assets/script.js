@@ -48,55 +48,48 @@ function genererLaPage(liste) {
   }
 }
 
-// ===== Boutons de catégories (extraits des works) =====
+// ===== Boutons de catégories construits depuis les NOMS présents dans les works =====
 function construireBoutonsDepuisWorks(works) {
+  // Normalise → renvoie le nom de catégorie ou null
+  const getCatName = (w) =>
+    (w.category && w.category.name) ||            // cas include: 'category'
+    (typeof w.category === 'string' ? w.category  // cas string direct
+                                    : null);
+
   // conteneur
   divButons.classList.add("container-boutons");
   divButons.innerHTML = "";
 
-  // bouton Tous
-  const boutonTous = document.createElement("button");
-  boutonTous.innerText = "Tous";
-  boutonTous.classList.add("boutonsdesfiltres", "active");
-  boutonTous.addEventListener("click", () => {
+  // bouton "Tous"
+  const btnTous = document.createElement("button");
+  btnTous.innerText = "Tous";
+  btnTous.classList.add("boutonsdesfiltres", "active");
+  btnTous.addEventListener("click", () => {
     genererLaPage(projets);
     removeActiveClass();
-    boutonTous.classList.add("active");
+    btnTous.classList.add("active");
   });
-  divButons.appendChild(boutonTous);
+  divButons.appendChild(btnTous);
 
-  // collecte catégories SANS planter si category est manquante
-  const idSet = new Set();
-  const listeDesCategories = [];
-  for (const w of works) {
-    // on supporte soit w.category {id,name}, soit w.categoryId (au cas où)
-    const id = (w.category && w.category.id) || w.categoryId;
-    const name = (w.category && w.category.name) || null;
-    if (!id || !name) continue; // on ignore les entrées incomplètes
-    if (!idSet.has(id)) {
-      idSet.add(id);
-      listeDesCategories.push({ id, name });
-    }
-  }
+  // 1) extraire et dédupliquer les noms présents (ignore null/vides)
+  const noms = [...new Set(works.map(getCatName).filter(Boolean))];
 
-  // si aucune catégorie valide → on ne montre que "Tous"
-  if (!listeDesCategories.length) {
+  // 2) si aucune catégorie valide → juste "Tous"
+  if (!noms.length) {
     gallery.before(divButons);
     return;
   }
 
-  // tri
-  listeDesCategories.sort((a, b) => a.id - b.id);
+  // (optionnel) tri alpha FR
+  noms.sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }));
 
-  // création des boutons
-  for (const cat of listeDesCategories) {
+  // 3) créer les boutons par NOM et filtrer par NOM
+  for (const nom of noms) {
     const btn = document.createElement("button");
-    btn.innerText = cat.name;
+    btn.innerText = nom;
     btn.classList.add("boutonsdesfiltres");
     btn.addEventListener("click", () => {
-      const filtres = projets.filter(p =>
-        (p.category && p.category.id === cat.id) || p.categoryId === cat.id
-      );
+      const filtres = projets.filter(p => getCatName(p) === nom);
       genererLaPage(filtres);
       removeActiveClass();
       btn.classList.add("active");
@@ -104,8 +97,10 @@ function construireBoutonsDepuisWorks(works) {
     divButons.appendChild(btn);
   }
 
+  // insérer la barre de filtres
   gallery.before(divButons);
 }
+
 
 // ===== Chargement initial =====
 fetch(`${API_BASE}/api/works`)
