@@ -20,38 +20,16 @@
   <meta name="description" content="">
 
   <!-- Твои стили -->
-  <link rel="stylesheet" href="./assets/style.css">
+  <link rel="stylesheet" href=".FrontEnd/assets/style.css">
 
-  <!-- ====== КОНФИГ API: вставить ДО основного скрипта ====== -->
   <!-- укажи здесь URL твоего Render-бэка -->
-  <meta name="api-url-prod" content="https://TON-APP.onrender.com">
+  <meta name="api-url-prod" content="https://architecte-sophie-bluel.onrender.com">
 
-  <script>
-  (function () {
-    // ?api=https://foo.bar позволит вручную переопределить API из адресной строки
-    const qs = new URLSearchParams(location.search);
-    const manual = qs.get('api');
+<!-- ⚙️ Config API — AVANT le JS de page -->
+<script src=".FrontEnd/assets/config.js"></script>
 
-    // Любая «локальная» среда: localhost/127.0.0.1/::1/*.local или file://
-    const isLocal =
-      location.protocol === 'file:' ||
-      /^(localhost|127\.0\.0\.1|::1)$/i.test(location.hostname) ||
-      /\.local$/i.test(location.hostname);
-
-    // Базовые адреса
-    const localApi = 'http://localhost:5678'; // твой локальный бэк
-    const prodApi =
-      document.querySelector('meta[name="api-url-prod"]')?.content ||
-      'https://TON-APP.onrender.com';
-
-    // Итоговый выбор: ручной override > локальный > прод
-    window.API_URL = manual || (isLocal ? localApi : prodApi);
-  })();
-  </script>
-  <!-- ====== /КОНФИГ API ====== -->
-
-  <!-- Твой основной скрипт (можно оставить defer) -->
-  <script src="./assets/script.js" defer></script>
+<!-- JS de cette page -->
+<script src=".FrontEnd/assets/script.js" defer></script>
 </head>
 
 
