@@ -1,3 +1,4 @@
+const API_BASE = window.API_URL || 'http://localhost:5678';
 // Récupération des éléments
 const formulaireDeConnexion = document.querySelector("form");
 const inputEmail = document.getElementById("email");

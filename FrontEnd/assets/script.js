@@ -1,7 +1,5 @@
-// ===== Config API (local vs Render) =====
-const API_BASE = window.location.hostname.includes('github.io')
-  ? 'https://architecte-sophie-bluel.onrender.com'   // ton Render
-  : 'http://localhost:5678';                          // dev local
+const API_BASE = window.API_URL || 'http://localhost:5678';
+
 
 // ===== Références & états =====
 const gallery = document.querySelector(".gallery");
