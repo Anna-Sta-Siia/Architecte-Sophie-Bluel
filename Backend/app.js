@@ -10,9 +10,9 @@ const swaggerDocs = yaml.load(path.join(__dirname, 'swagger.yaml'));
 const app = express();
 
 /* ===== CORS ===== */
-// Domaines “prod” autorisés (Render) ; on garde un fallback pour le dev
+// Domaines “prod” autorisés (Render) ; fallback pour le dev
 const DEFAULT_ORIGINS = [
-  'https://anna-sta-siia.github.io', // ton GH Pages
+  'https://anna-sta-siia.github.io', // GH Pages
   'http://localhost:5173',
   'http://localhost:5678',
 ];
@@ -22,28 +22,20 @@ const ALLOWED = new Set(
     .map(s => s.trim())
     .filter(Boolean)
 );
-
 // Autoriser automatiquement *tous* les localhost/127.0.0.1 (quel que soit le port)
-const isLocal = (origin) =>
-  /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+const isLocal = origin => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
 
-app.use(
-  cors({
-    origin(origin, cb) {
-      // Requêtes sans origin (curl, SSR, tests)
-      if (!origin) return cb(null, true);
-      // Local dev accepté
-      if (isLocal(origin)) return cb(null, true);
-      // Origines “prod” autorisées via env
-      if (ALLOWED.has(origin)) return cb(null, true);
-      return cb(new Error('Not allowed by CORS: ' + origin));
-    },
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
-// Préflight
-app.options('*', cors());
+app.use(cors({
+  origin(origin, cb) {
+    if (!origin) return cb(null, true);            // curl/postman/SSR
+    if (isLocal(origin)) return cb(null, true);    // dev local
+    if (ALLOWED.has(origin)) return cb(null, true);// prod autorisée
+    return cb(new Error('Not allowed by CORS: ' + origin));
+  },
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
+}));
+app.options('*', cors()); // préflight
 
 /* ===== parsers + sécurité ===== */
 app.use(express.json());
@@ -54,7 +46,21 @@ app.use(helmet({ crossOriginResourcePolicy: false })); // pour /images
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 /* ===== health-check ===== */
+// Route santé JSON pour scripts/moniteurs
+app.get('/api/health', (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+  });
+});
+// Alias legacy (si tu en as besoin)
 app.get('/health', (_req, res) => res.status(200).send('ok'));
+
+// (Optionnel) petit message sur /
+app.get('/', (_req, res) => {
+  res.type('text').send('API Sophie Bluel is running. Try /api/health or /api/works');
+});
 
 /* ===== API routes ===== */
 const db = require('./models');

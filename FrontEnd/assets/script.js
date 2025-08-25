@@ -1,116 +1,145 @@
-/* ================== script.js (version MAJ) ================== */
+// ===== Config API (local vs Render) =====
+const API_BASE = window.location.hostname.includes('github.io')
+  ? 'https://architecte-sophie-bluel.onrender.com'   // ton Render
+  : 'http://localhost:5678';                          // dev local
 
-// Détecte automatiquement l’URL de l’API (local ↔ Render)
-const API_BASE =
-  (location.hostname === "localhost" || location.hostname === "127.0.0.1")
-    ? "http://localhost:5678"
-    : "https://architecte-sophie-bluel.onrender.com"; // ← remplace si ton URL Render est différente
-
+// ===== Références & états =====
 const gallery = document.querySelector(".gallery");
-let projets = [];                          // source de vérité
+let projets = []; // tous les works en mémoire
 const divButons = document.createElement("div");
 
-// Mode admin ?
-const cle = sessionStorage.getItem("token");
+// Mode admin : masque les filtres
+const token = sessionStorage.getItem("token");
 const elementsModeAdmin = document.querySelectorAll(".mode");
-if (cle !== null) {
+if (token) {
   elementsModeAdmin.forEach(el => el.classList.remove("normal"));
-  // Si tu veux garder les filtres même en admin, commente la ligne suivante :
   divButons.classList.add("hidden");
 }
 
-/* ================== INIT ================== */
-init().catch(e => console.error("Init error:", e));
-
-async function init() {
-  await fetchWorks();
-  genererLaPage(projets);
-  buildCategoryButtonsFromWorks(projets);
+// ===== Helpers =====
+function removeActiveClass() {
+  document.querySelectorAll(".boutonsdesfiltres")
+    .forEach(btn => btn.classList.remove("active"));
 }
 
-/* ================== DATA ================== */
-async function fetchWorks() {
-  const res = await fetch(`${API_BASE}/api/works`);
-  if (!res.ok) throw new Error(`GET /works -> ${res.status}`);
-  projets = await res.json();
+function fallbackIfBroken(imgEl) {
+  imgEl.addEventListener("error", () => {
+    imgEl.src = "assets/icons/image-placeholder.png";
+    imgEl.alt = "Image manquante";
+  });
 }
 
-/* ================== GALERIE ================== */
+// ===== Rendu de la galerie =====
 function genererLaPage(liste) {
   gallery.innerHTML = "";
-  for (const p of liste) {
+  for (const w of liste) {
     const figure = document.createElement("figure");
     const img = document.createElement("img");
-    img.src = p.imageUrl;
-    img.alt = p.title;
+    img.src = w.imageUrl;
+    img.alt = w.title || "";
+    fallbackIfBroken(img);
 
     const caption = document.createElement("figcaption");
-    caption.innerText = p.title;
+    caption.innerText = w.title || "";
 
-    figure.append(img, caption);
+    figure.appendChild(img);
+    figure.appendChild(caption);
     gallery.appendChild(figure);
   }
 }
 
-/* ================== FILTRES (catégories depuis les works) ================== */
-function buildCategoryButtonsFromWorks(works) {
-  if (cle !== null) return; // masque en mode admin (enlève si tu veux les montrer)
-
-  divButons.innerHTML = "";
+// ===== Boutons de catégories (extraits des works) =====
+function construireBoutonsDepuisWorks(works) {
+  // conteneur
   divButons.classList.add("container-boutons");
+  divButons.innerHTML = "";
 
-  // Bouton "Tous"
-  const btnTous = document.createElement("button");
-  btnTous.innerText = "Tous";
-  btnTous.classList.add("boutonsdesfiltres", "active");
-  btnTous.addEventListener("click", () => {
+  // bouton Tous
+  const boutonTous = document.createElement("button");
+  boutonTous.innerText = "Tous";
+  boutonTous.classList.add("boutonsdesfiltres", "active");
+  boutonTous.addEventListener("click", () => {
     genererLaPage(projets);
-    setActive(btnTous);
+    removeActiveClass();
+    boutonTous.classList.add("active");
   });
-  divButons.appendChild(btnTous);
+  divButons.appendChild(boutonTous);
 
-  // Dédoublonnage depuis les works (sécurisé)
-  const map = new Map(); // id -> name
+  // collecte catégories SANS planter si category est manquante
+  const idSet = new Set();
+  const listeDesCategories = [];
   for (const w of works) {
-    const c = w.category;
-    if (!c || !c.id) continue;
-    if (!map.has(c.id)) map.set(c.id, c.name);
+    // on supporte soit w.category {id,name}, soit w.categoryId (au cas où)
+    const id = (w.category && w.category.id) || w.categoryId;
+    const name = (w.category && w.category.name) || null;
+    if (!id || !name) continue; // on ignore les entrées incomplètes
+    if (!idSet.has(id)) {
+      idSet.add(id);
+      listeDesCategories.push({ id, name });
+    }
   }
 
-  // Trie + rendu
-  [...map.entries()]
-    .map(([id, name]) => ({ id, name }))
-    .sort((a, b) => a.id - b.id)
-    .forEach(cat => {
-      const btn = document.createElement("button");
-      btn.innerText = cat.name;
-      btn.classList.add("boutonsdesfiltres");
-      btn.addEventListener("click", () => {
-        const filtres = projets.filter(p => p.category && p.category.id === cat.id);
-        genererLaPage(filtres);
-        setActive(btn);
-      });
-      divButons.appendChild(btn);
+  // si aucune catégorie valide → on ne montre que "Tous"
+  if (!listeDesCategories.length) {
+    gallery.before(divButons);
+    return;
+  }
+
+  // tri
+  listeDesCategories.sort((a, b) => a.id - b.id);
+
+  // création des boutons
+  for (const cat of listeDesCategories) {
+    const btn = document.createElement("button");
+    btn.innerText = cat.name;
+    btn.classList.add("boutonsdesfiltres");
+    btn.addEventListener("click", () => {
+      const filtres = projets.filter(p =>
+        (p.category && p.category.id === cat.id) || p.categoryId === cat.id
+      );
+      genererLaPage(filtres);
+      removeActiveClass();
+      btn.classList.add("active");
     });
-
-  if (!divButons.parentElement) gallery.before(divButons);
-
-  function setActive(button) {
-    document.querySelectorAll(".boutonsdesfiltres")
-      .forEach(b => b.classList.remove("active"));
-    button.classList.add("active");
+    divButons.appendChild(btn);
   }
+
+  gallery.before(divButons);
 }
 
-/* ================== MODALE ================== */
+// ===== Chargement initial =====
+fetch(`${API_BASE}/api/works`)
+  .then(r => r.json())
+  .then(data => {
+    projets = data;
+    genererLaPage(projets);
+    construireBoutonsDepuisWorks(projets);
+  })
+  .catch(err => console.error("Erreur works:", err));
+
+/* ===================== Modale / Admin ===================== */
 const btnMode = document.querySelector("#portfolio .mode");
 const overlay = document.getElementById("overlay");
 const closeBtn = document.querySelector(".close");
 
+const ajouterPhotoBtn = document.getElementById("btn-ajouter-photo");
+const formulaireAjout = document.querySelector(".modal-ajout");
+const galerieModale = document.querySelector(".modal-gallery");
+const formAjout = document.getElementById("form-ajout-photo");
+
+const photoInput = document.getElementById("photo");
+const titreInput = document.getElementById("titre");
+const categorieSelect = document.getElementById("categorie");
+const validerBtn = document.getElementById("valider");
+const imageChoisie = document.querySelector(".imagechoisi");
+const previewIcone = document.querySelector(".preview");
+const elementsACacher = document.querySelector(".elements_a_cacher");
+
+// ouvrir/fermer
 btnMode?.addEventListener("click", () => {
   overlay.classList.remove("hidden");
   overlay.classList.add("overlay");
-  formulaireAjout.classList.add("hidden"); // revient toujours à la vue 1
+  formulaireAjout.classList.add("hidden");
   document.querySelector(".modal").classList.remove("hidden");
   afficherGalerieDansModale(projets);
 });
@@ -121,45 +150,52 @@ closeBtn?.addEventListener("click", () => {
   resetFormulaireAjout();
 });
 
-overlay?.addEventListener("click", (event) => {
-  if (event.target === overlay) {
+overlay?.addEventListener("click", (e) => {
+  if (e.target === overlay) {
     overlay.classList.add("hidden");
     overlay.classList.remove("overlay");
     resetFormulaireAjout();
   }
 });
 
-function afficherGalerieDansModale(liste) {
+async function afficherGalerieDansModale(projetsCourants) {
   const container = document.querySelector(".modal-gallery");
   container.innerHTML = "";
 
-  for (const projet of liste) {
-    const wrap = document.createElement("div");
+  // recharge les works (ça évite de montrer des choses obsolètes)
+  try {
+    const res = await fetch(`${API_BASE}/api/works`);
+    projets = await res.json();
+    genererLaPage(projets);
+  } catch (e) {
+    console.error("Erreur lors du rechargement works:", e);
+  }
 
+  for (const projet of projets) {
+    const wrap = document.createElement("div");
     const img = document.createElement("img");
     img.src = projet.imageUrl;
-    img.alt = projet.title;
+    img.alt = projet.title || "";
+    fallbackIfBroken(img);
 
     const del = document.createElement("div");
-    const ico = document.createElement("i");
-    ico.classList.add("fa-regular", "fa-trash-can");
     del.classList.add("btn-delete");
-    del.appendChild(ico);
+    const i = document.createElement("i");
+    i.classList.add("fa-regular", "fa-trash-can");
+    del.appendChild(i);
 
     del.addEventListener("click", () => supprimerImage(projet.id));
 
-    wrap.append(img, del);
+    wrap.appendChild(img);
+    wrap.appendChild(del);
     container.appendChild(wrap);
   }
 
-  const retourBtn = document.querySelector(".fa-arrow-left");
-  if (retourBtn) {
-    retourBtn.onclick = () => {
-      formulaireAjout.classList.add("hidden");
-      document.querySelector(".modal").classList.remove("hidden");
-      resetFormulaireAjout();
-    };
-  }
+  document.querySelector(".fa-arrow-left")?.addEventListener("click", () => {
+    formulaireAjout.classList.add("hidden");
+    document.querySelector(".modal").classList.remove("hidden");
+    resetFormulaireAjout();
+  });
 }
 
 function supprimerImage(id) {
@@ -168,21 +204,16 @@ function supprimerImage(id) {
     headers: { Authorization: `Bearer ${sessionStorage.getItem("token")}` }
   })
     .then(r => {
-      if (!r.ok) throw new Error(`DELETE /works/${id} -> ${r.status}`);
-      // MAJ état + UI
+      if (!r.ok) throw new Error("Delete failed");
       projets = projets.filter(p => p.id !== id);
       genererLaPage(projets);
-      buildCategoryButtonsFromWorks(projets);
+      construireBoutonsDepuisWorks(projets);
       afficherGalerieDansModale(projets);
     })
     .catch(err => console.error("Erreur suppression :", err));
 }
 
-/* ================== VUE 2 : AJOUT ================== */
-const ajouterPhotoBtn = document.getElementById("btn-ajouter-photo");
-const formulaireAjout = document.querySelector(".modal-ajout");
-const galerieModale = document.querySelector(".modal-gallery");
-
+// passage vue ajout
 ajouterPhotoBtn?.addEventListener("click", () => {
   galerieModale.parentElement.classList.add("hidden");
   formulaireAjout.classList.remove("hidden");
@@ -203,29 +234,19 @@ function chargerCategories() {
         select.appendChild(opt);
       });
     })
-    .catch(e => console.error("Erreur /categories :", e));
+    .catch(e => console.error("Erreur categories:", e));
 }
 
-const photoInput = document.getElementById("photo");
-const titreInput = document.getElementById("titre");
-const categorieSelect = document.getElementById("categorie");
-const validerBtn = document.getElementById("valider");
-
-const imageChoisie = document.querySelector(".imagechoisi");
-const previewIcone = document.querySelector(".preview");
-const elementsACacher = document.querySelector(".elements_a_cacher");
-
-// Vérif IMAGE
+// Prévisualisation & validation formulaire
 photoInput?.addEventListener("change", () => {
-  const file = photoInput.files[0];
+  const file = photoInput.files?.[0];
   const valid = ["image/jpeg", "image/png"];
   if (!file || !valid.includes(file.type) || file.size > 4 * 1024 * 1024) return;
 
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = e => {
     imageChoisie.src = e.target.result;
     imageChoisie.alt = file.name;
-
     imageChoisie.classList.remove("hidden");
     previewIcone.classList.add("hidden");
     elementsACacher.classList.add("hidden");
@@ -238,24 +259,17 @@ titreInput?.addEventListener("input", checkForm);
 categorieSelect?.addEventListener("change", checkForm);
 
 function checkForm() {
-  const file = photoInput.files[0];
-  const titre = (titreInput.value || "").trim();
-  const categorie = categorieSelect.value;
+  const file = photoInput.files?.[0];
+  const titre = titreInput.value.trim();
+  const cat = categorieSelect.value;
   const valid = ["image/jpeg", "image/png"];
-
-  const ok = file && valid.includes(file.type) &&
-             file.size <= 4 * 1024 * 1024 &&
-             titre !== "" && categorie !== "";
-
+  const ok = file && valid.includes(file.type) && file.size <= 4 * 1024 * 1024 && titre && cat;
   validerBtn.disabled = !ok;
   validerBtn.style.backgroundColor = ok ? "#1D6154" : "#A7A7A7";
 }
 
-// Ajout
-const formAjout = document.getElementById("form-ajout-photo");
-formAjout?.addEventListener("submit", (event) => {
-  event.preventDefault();
-
+formAjout?.addEventListener("submit", (e) => {
+  e.preventDefault();
   const fd = new FormData();
   fd.append("image", photoInput.files[0]);
   fd.append("title", titreInput.value);
@@ -267,16 +281,15 @@ formAjout?.addEventListener("submit", (event) => {
     body: fd
   })
     .then(r => {
-      if (!r.ok) throw new Error("Erreur lors de l'ajout");
+      if (!r.ok) throw new Error("Erreur ajout");
       return r.json();
     })
     .then(nouveau => {
       projets.push(nouveau);
       genererLaPage(projets);
-      buildCategoryButtonsFromWorks(projets);
+      construireBoutonsDepuisWorks(projets);
       afficherGalerieDansModale(projets);
       resetFormulaireAjout();
-      formulaireAjout.classList.add("hidden");
       overlay.classList.add("hidden");
       overlay.classList.remove("overlay");
     })
@@ -287,7 +300,7 @@ formAjout?.addEventListener("submit", (event) => {
 });
 
 function resetFormulaireAjout() {
-  formAjout.reset();
+  formAjout?.reset();
   validerBtn.disabled = true;
   validerBtn.style.backgroundColor = "#A7A7A7";
   imageChoisie.src = "";

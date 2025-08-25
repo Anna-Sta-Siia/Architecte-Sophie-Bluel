@@ -1,0 +1,13 @@
+{
+  "name": "architecte-sophie-bluel",
+  "private": true,
+  "devDependencies": {
+    "concurrently": "^9.0.0",
+    "live-server": "^1.2.2"
+  },
+  "scripts": {
+    "dev:api": "npm run start --prefix Backend",
+    "dev:front": "live-server ./FrontEnd --port=5173 --entry-file=index.html",
+    "dev": "concurrently -n API,FRONT -c green,blue \"npm:dev:api\" \"npm:dev:front\""
+  }
+}

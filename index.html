@@ -1,29 +1,189 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <title>Redirection…</title>
 
-    <!-- Redirection immédiate vers FrontEnd/ (chemin RELATIF) -->
-    <meta http-equiv="refresh" content="0; url=./FrontEnd/">
-    <link rel="canonical" href="./FrontEnd/">
+<head>
+  <meta charset="UTF-8">
+  <title>Sophie Bluel - Architecte d'intérieur</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Fallback JS (plus fiable si le meta est bloqué) -->
-    <script>
-      // Chemin relatif pour respecter le sous-chemin GitHub Pages (…/Architecte-Sophie-Bluel/)
-      location.replace('./FrontEnd/');
-    </script>
+  <!-- Prod API (Render) -->
+  <meta name="api-url-prod" content="https://TON-APP.onrender.com">
 
-    <style>
-      html,body{height:100%}
-      body{
-        font:16px system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-        display:grid; place-items:center; margin:0; background:#fff;
-      }
-      a{color:#2f62ff;text-decoration:underline}
-    </style>
-  </head>
-  <body>
-    <p>Redirection vers <a href="./FrontEnd/">FrontEnd/</a>…</p>
-  </body>
+  <!-- Fonts / Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <link rel="stylesheet" href="./assets/style.css">
+
+  <!-- ⚙️ Config API — AVANT le JS de page -->
+  <script src="./assets/config.js"></script>
+
+  <!-- JS de cette page -->
+  <script src="./assets/script.js" defer></script>
+</head>
+
+
+<body>
+	<div class="mode normal"><i class="fa-solid fa-pen-to-square"></i><span>Mode édition</span></div>
+	<header>
+		<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+	<nav>
+  <ul>
+    <li><a href="#portfolio">projets</a></li>
+    <li><a href="#contact">contact</a></li>
+    <li><a href="login.html">login</a></li>
+    <li><a href="https://instagram.com" target="_blank" rel="noopener">
+      <img src="./assets/icons/instagram.png" alt="Instagram"></a>
+    </li>
+  </ul>
+</nav>
+	</header>
+	<main>
+		<section id="introduction">
+			<figure>
+				<img src="./assets/images/sophie-bluel.png" alt="">
+			</figure>
+			<article>
+				<h2>Designer d'espace</h2>
+				<p>Je raconte votre histoire, je valorise vos idées. Je vous accompagne de la conception à la livraison
+					finale du chantier.</p>
+				<p>Chaque projet sera étudié en commun, de façon à mettre en valeur les volumes, les matières et les
+					couleurs dans le respect de l’esprit des lieux et le choix adapté des matériaux. Le suivi du
+					chantier sera assuré dans le souci du détail, le respect du planning et du budget.</p>
+				<p>En cas de besoin, une équipe pluridisciplinaire peut-être constituée : architecte DPLG,
+					décorateur(trice)</p>
+			</article>
+		</section>
+		<section id="portfolio">
+			<div class="mesprojets">
+				<h2>Mes Projets</h2>
+				<div class="mode normal"><i class="fa-solid fa-pen-to-square"></i><span>modifier</span></div>
+			</div>
+			<div class="gallery">
+				<!--
+			<figure>
+				<img src="assets/images/abajour-tahina.png" alt="Abajour Tahina">
+				<figcaption>Abajour Tahina</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/appartement-paris-v.png" alt="Appartement Paris V">
+				<figcaption>Appartement Paris V</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/restaurant-sushisen-londres.png" alt="Restaurant Sushisen - Londres">
+				<figcaption>Restaurant Sushisen - Londres</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/la-balisiere.png" alt="Villa “La Balisiere” - Port Louis">
+				<figcaption>Villa “La Balisiere” - Port Louis</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/structures-thermopolis.png" alt="Structures Thermopolis">
+				<figcaption>Structures Thermopolis</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/appartement-paris-x.png" alt="Appartement Paris X">
+				<figcaption>Appartement Paris X</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/le-coteau-cassis.png" alt="Pavillon “Le coteau” - Cassis">
+				<figcaption>Pavillon “Le coteau” - Cassis</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/villa-ferneze.png" alt="Villa Ferneze - Isola d’Elba">
+				<figcaption>Villa Ferneze - Isola d’Elba</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/appartement-paris-xviii.png" alt="Appartement Paris XVIII">
+				<figcaption>Appartement Paris XVIII</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/bar-lullaby-paris.png" alt="Bar “Lullaby” - Paris">
+				<figcaption>Bar “Lullaby” - Paris</figcaption>
+			</figure>
+			<figure>
+				<img src="assets/images/hotel-first-arte-new-delhi.png" alt="Hotel First Arte - New Delhi">
+				<figcaption>Hotel First Arte - New Delhi</figcaption>
+			</figure>
+			-->
+			</div>
+		</section>
+		<section id="contact">
+			<h2>Contact</h2>
+			<p>Vous avez un projet ? Discutons-en !</p>
+			<form action="#" method="post">
+				<label for="name">Nom</label>
+				<input type="text" name="name" id="name">
+				<label for="email">Email</label>
+				<input type="email" name="email" id="email">
+				<label for="message">Message</label>
+				<textarea name="message" id="message" cols="30" rows="10"></textarea>
+				<input type="submit" value="Envoyer">
+			</form>
+		</section>
+	</main>
+
+	<footer>
+		<nav>
+			<ul>
+				<li>Mentions Légales</li>
+			</ul>
+		</nav>
+	</footer>
+	<!--Ajout de la modale, la première vue-->
+	<div id="overlay" class="hidden">
+		<div class="modal">
+			<span class="close">&times;</span>
+			<h3>Galerie photo</h3>
+			<div class="modal-gallery"></div>
+			<div class="btn-ajouter-photo">
+				<div class="lignegrise"></div>
+				<button id="btn-ajouter-photo">Ajouter une photo</button>
+			</div>
+		</div>
+		<!-- Partie ajout photo,la deuxième vue (cachée au début) -->
+		<div class="modal-ajout hidden">
+			<i class="fa-solid fa-arrow-left"></i>
+			<span class="close">&times;</span><!--entité HTML pour le symbole "croix"-->
+			<h3>Ajout photo</h3>
+
+			<form id="form-ajout-photo" enctype="multipart/form-data">
+				<!-- enctype c'est comment encoder les données du formulaire quand on les envoie au serveur -->
+				<!-- "multipart/form-data", c'est pour envoyer texte + fichier ensemble -->
+				<div class="upload-zone">
+					<!-- Icône par défaut -->
+					<img class="preview" src="assets/icons/Vector.png" alt="preview" />
+					<!-- Image choisie -->
+					<img src="assets/icons/Vector.png" alt="" class="imagechoisi hidden" />
+					<!-- Input caché -->
+					<input type="file" id="photo" accept=".jpg, .jpeg, .png" required hidden />
+					<!-- Bouton "Ajouter" -->
+					<div class="elements_a_cacher">
+						<label for="photo" class="custom-upload">+ Ajouter photo</label>
+						<!-- Label for=photo et input type=file et id=photo declanche l'ouverture de la fenetre-->
+						<p class="info-fichier">jpg, png: 4mo max</p>
+					</div>
+				</div>
+				<label for="titre">Titre</label>
+				<input type="text" id="titre" required />
+				<label for="categorie">Catégorie</label>
+				<select id="categorie" required>
+					<option value="" label=" "></option>
+					<!-- Catégories par JS -->
+				</select>
+				<div class="btn-valider">
+					<div class="lignegrise"></div>
+					<button type="submit" id="valider" disabled>Valider</button>
+				</div>
+			</form>
+		</div>
+
+	</div>
+
+</body>
+
 </html>
