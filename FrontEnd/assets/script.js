@@ -6,6 +6,7 @@ const gallery = document.querySelector(".gallery");
 let projets = []; // tous les works en mémoire
 const divButons = document.createElement("div");
 const loginButton=document.querySelector(".loginButton");
+
 // Mode admin : masque les filtres et du button "Login"
 const token = sessionStorage.getItem("token");
 const elementsModeAdmin = document.querySelectorAll(".mode");
