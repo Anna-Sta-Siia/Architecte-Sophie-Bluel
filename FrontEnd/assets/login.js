@@ -31,7 +31,7 @@ form.addEventListener("submit", async (e) => {
       sessionStorage.setItem("role", "demo");
       // (option) date d'expiration courte
       sessionStorage.setItem("demo_expires_at", String(Date.now() + 60 * 60 * 1000));
-      window.location.href = "/index.html";
+      window.location.href = "../index.html";
       return;
     }
 
