@@ -45,7 +45,7 @@ formulaireDeConnexion.addEventListener("submit", async (event) => {
         if (data.token) {
             messageDErreur.textContent = ""; // tout est bon
             sessionStorage.setItem("token", data.token);
-            window.location.href = "/index.html"; 
+            window.location.href = "../index.html"; 
         }
     } catch (err) {
         console.error(err);
