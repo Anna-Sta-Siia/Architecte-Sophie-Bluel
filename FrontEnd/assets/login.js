@@ -54,7 +54,7 @@ form.addEventListener("submit", async (e) => {
     if (data?.token) {
       sessionStorage.setItem("token", data.token);
       sessionStorage.setItem("role", "admin");  // <- toi
-      window.location.href = "/index.html";
+      window.location.href = "../index.html";
     } else {
       msg.textContent = "Réponse inattendue du serveur.";
       msg.classList.remove("hidden");
