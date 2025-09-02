@@ -1,59 +1,67 @@
 const API_BASE = window.API_URL || 'http://localhost:5678';
-// Récupération des éléments
-const formulaireDeConnexion = document.querySelector("form");
-const inputEmail = document.getElementById("email");
-const inputMdp = document.getElementById("motDePasse");
-const messageDErreur = document.createElement("p");
-messageDErreur.classList.add("message-erreur");
-messageDErreur.classList.add("hidden")
-const boutonDeSubmit = document.querySelector(".seconnecter");
-boutonDeSubmit.before(messageDErreur);
 
-// Réinitialisation du formulaire à l’arrivée
+// --- Identifiants DEMO ---
+const DEMO_EMAIL = "demo@site.com";
+const DEMO_PASS  = "123456";
+
+const form        = document.getElementById("loginForm");
+const inputEmail  = document.getElementById("email");
+const inputMdp    = document.getElementById("motDePasse");
+const msg         = document.getElementById("msg");
+
+// Préremplissage (option : readOnly pour empêcher toute modif)
 window.addEventListener("pageshow", () => {
-    inputEmail.value = "";
-    inputMdp.value = "";
+  inputEmail.value = DEMO_EMAIL;
+  inputMdp.value   = DEMO_PASS;
+  // inputEmail.readOnly = true;   // décommente si tu veux bloquer
+  // inputMdp.readOnly   = true;
+  msg.textContent = "";
+  msg.classList.add("hidden");
 });
 
-// Lors de la soumission du formulaire
-formulaireDeConnexion.addEventListener("submit", async (event) => {
-    event.preventDefault();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = inputEmail.value.trim();
+  const password = inputMdp.value;
 
-    const email = inputEmail.value;
-    const password = inputMdp.value;
-
-    try {
-        // 🟢 On attend que window.API_URL soit défini (config.js l’ajoute en async)
-        while (!window.API_URL) {
-            await new Promise(r => setTimeout(r, 20));
-        }
-
-        const response = await fetch(`${window.API_URL}/api/users/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, password })
-        });
-
-        if (!response.ok) {
-            messageDErreur.textContent = "Le mot de passe est incorrect. Veuillez réessayer.";
-            return;
-        }
-
-        const data = await response.json();
-        if (data.token) {
-            messageDErreur.textContent = ""; // tout est bon
-            sessionStorage.setItem("token", data.token);
-            window.location.href = "../index.html"; 
-        }
-    } catch (err) {
-        console.error(err);
-        messageDErreur.textContent = "Erreur de connexion. Vérifie l’URL ou le serveur.";
+  try {
+    // 1) Si identifiants démo → pas d'appel réseau
+    if (email === DEMO_EMAIL && password === DEMO_PASS) {
+      sessionStorage.setItem("token", "DEMO_TOKEN");
+      sessionStorage.setItem("role", "demo");
+      // (option) date d'expiration courte
+      sessionStorage.setItem("demo_expires_at", String(Date.now() + 60 * 60 * 1000));
+      window.location.href = "/index.html";
+      return;
     }
-});
 
-// Dès que l’utilisateur modifie le mot de passe → on efface l'erreur
-inputMdp.addEventListener("input", () => {
-    messageDErreur.textContent = "";
+    // 2) Sinon → vraie connexion API
+    while (!window.API_URL) await new Promise(r => setTimeout(r, 20));
+
+    const resp = await fetch(`${window.API_URL}/api/users/login`, {
+      method : "POST",
+      headers: { "Content-Type": "application/json" },
+      body   : JSON.stringify({ email, password })
+    });
+
+    if (!resp.ok) {
+      msg.textContent = "Identifiants invalides.";
+      msg.classList.remove("hidden");
+      return;
+    }
+
+    const data = await resp.json();
+    if (data?.token) {
+      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("role", "admin");  // <- toi
+      window.location.href = "/index.html";
+    } else {
+      msg.textContent = "Réponse inattendue du serveur.";
+      msg.classList.remove("hidden");
+    }
+  } catch (err) {
+    console.error(err);
+    msg.textContent = "Erreur de connexion. Vérifie l’URL ou le serveur.";
+    msg.classList.remove("hidden");
+  }
 });
