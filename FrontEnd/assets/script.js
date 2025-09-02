@@ -5,15 +5,32 @@ const API_BASE = window.API_URL || 'http://localhost:5678';
 const gallery = document.querySelector(".gallery");
 let projets = []; // tous les works en mémoire
 const divButons = document.createElement("div");
-
-// Mode admin : masque les filtres
+const loginButton=document.querySelector(".loginButton");
+// Mode admin : masque les filtres et du button "Login"
 const token = sessionStorage.getItem("token");
 const elementsModeAdmin = document.querySelectorAll(".mode");
 if (token) {
   elementsModeAdmin.forEach(el => el.classList.remove("normal"));
   divButons.classList.add("hidden");
+  loginButton.classList.add("hidden");
 }
+// --- Déconnexion (bandeau noir tout en haut) ---
+const logoutBar = document.querySelector("body > .mode");
+logoutBar?.addEventListener("click", () => {
+  // 1) On enlève le token
+  sessionStorage.removeItem("token");
 
+  // 2) On remet l’UI en mode “normal”
+  elementsModeAdmin.forEach(el => el.classList.add("normal"));
+  divButons.classList.remove("hidden");
+
+  // 3) On ferme une éventuelle modale ouverte
+  overlay?.classList.add("hidden");
+  overlay?.classList.remove("overlay");
+
+  // 4) Rechargement propre sur index (sans revenir au login avec la flèche)
+  location.replace(new URL("./index.html", location.href));
+});
 // ===== Helpers =====
 function removeActiveClass() {
   document.querySelectorAll(".boutonsdesfiltres")

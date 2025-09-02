@@ -1,4 +1,3 @@
-// assets/config.js
 (function () {
   // Permet d’OVERRIDE à la volée: ?api=https://mon-api.exemple.com
   const qs = new URLSearchParams(location.search);
